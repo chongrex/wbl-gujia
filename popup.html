@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>万宝楼估价助手</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 400px;
+      height: 540px;
+      max-height: 600px;
+    }
+    body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 13px;
+      color: #333;
+      background: #f5f7f8;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .header {
+      flex: none;
+      padding: 14px 16px;
+      background: linear-gradient(135deg, #1e7a8c, #0f5b6b);
+      color: #fff;
+    }
+    .header h1 { font-size: 16px; font-weight: 600; }
+    .header p { font-size: 12px; opacity: 0.8; margin-top: 4px; }
+    .tabs {
+      flex: none;
+      display: flex;
+      background: #fff;
+      border-bottom: 1px solid #e6e6e6;
+    }
+    .tab {
+      flex: 1;
+      padding: 10px 0;
+      text-align: center;
+      cursor: pointer;
+      color: #666;
+      border-bottom: 2px solid transparent;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .tab.active {
+      color: #1e7a8c;
+      border-bottom-color: #1e7a8c;
+      font-weight: 600;
+    }
+    .tab .count {
+      display: inline-block;
+      min-width: 18px;
+      height: 18px;
+      line-height: 18px;
+      border-radius: 9px;
+      background: #e0e0e0;
+      color: #fff;
+      font-size: 11px;
+      margin-left: 4px;
+    }
+    .tab.active .count { background: #1e7a8c; }
+    /* 内容区：关键——限制高度并允许滚动 */
+    .content {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 10px;
+    }
+    .empty {
+      text-align: center;
+      color: #aaa;
+      padding: 40px 0;
+      font-size: 13px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .card .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .card .seq {
+      font-weight: 600;
+      color: #1e7a8c;
+      font-size: 12px;
+      word-break: break-all;
+    }
+    .card .price {
+      font-size: 18px;
+      font-weight: 700;
+      color: #e07a2f;
+      white-space: nowrap;
+    }
+    .card .price .tag-uneval {
+      font-size: 11px;
+      font-style: normal;
+      font-weight: 400;
+      color: #999;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      padding: 0 4px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+    .card .meta {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+    .card .ops { display: flex; gap: 6px; flex-wrap: wrap; }
+    .card .ops button {
+      flex: 1;
+      min-width: 60px;
+      height: 26px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 12px;
+      color: #555;
+      white-space: nowrap;
+    }
+    .card .ops button:hover { border-color: #1e7a8c; color: #1e7a8c; }
+    .card .ops button.primary { border-color: #1e7a8c; color: #1e7a8c; background: #eef6f7; }
+    .card .ops button.danger:hover { border-color: #e54d42; color: #e54d42; }
+    .footer {
+      flex: none;
+      display: flex;
+      gap: 6px;
+      padding: 10px;
+      background: #fff;
+      border-top: 1px solid #e6e6e6;
+    }
+    .footer button {
+      flex: 1;
+      height: 32px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 13px;
+      color: #555;
+    }
+    .footer button.primary {
+      background: #1e7a8c;
+      color: #fff;
+      border-color: #1e7a8c;
+    }
+    .footer button.danger { color: #e54d42; border-color: #e54d42; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>万宝楼估价助手</h1>
+    <p>估价 · 收藏 · 对比 · 结果管理</p>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="roleList">估价列表<span class="count" id="count-roleList">0</span></div>
+    <div class="tab" data-tab="result">估价结果<span class="count" id="count-result">0</span></div>
+    <div class="tab" data-tab="favorite">收藏列表<span class="count" id="count-favorite">0</span></div>
+    <div class="tab" data-tab="compare">对比列表<span class="count" id="count-compare">0</span></div>
+  </div>
+
+  <div class="content" id="content"></div>
+
+  <div class="footer" id="footer">
+    <button class="primary" id="openPage">打开万宝楼</button>
+    <button class="danger" id="clearBtn">清空当前列表</button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "万宝楼估价助手",
+  "version": "1.0.0",
+  "description": "在万宝楼角色页面自动获取商品编号，调用爱剑三估价接口，支持临时保存、对比列表和收藏列表。",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "万宝楼估价助手",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://jx3.seasunwbl.com/*"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": ["storage", "webRequest"],
+  "host_permissions": [
+    "https://www.aijx3.cn/*",
+    "https://jx3.seasunwbl.com/*",
+    "https://trade-api.seasunwbl.com/*"
+  ]
+}
